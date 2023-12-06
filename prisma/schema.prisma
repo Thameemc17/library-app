@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug String @unique
+  ISBN String @unique
+  title String
+  authors String[]
+  genre String
+  publicationDate DateTime
+  publisher String
+  Language String
+  pages Int
+  format BookFormat @default(HARD_COVER)
+  summary String 
+  isAvailable Boolean
+  shelfNumber Shelf?
+  coverImage String
+  rating Float
+  reviews Review[]
+}
+
+model Shelf{
+id       String    @id @default(auto()) @map("_id") @db.ObjectId
+slug     String    @unique  
+book Book @relation(fields: [bookId], references: [id])
+bookId String @db.ObjectId @unique
+}
+
+model Review {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug     String    @unique
+  book Book @relation(fields: [bookId], references: [id])
+  bookId String @db.ObjectId
+}
+
+model User {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String?   @unique
+  name    String?
+  password String?
+  contactNumber BigInt
+  hasMemberShip Boolean
+
+
+}
+
+model BorrowingHistroy{
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model LibraryStaff {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+
+}
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookFormat {
+  HARD_COVER
+  PAPER_BACK
+  EBOOK 
+}
